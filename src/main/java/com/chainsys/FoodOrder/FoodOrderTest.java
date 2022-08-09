@@ -20,7 +20,5 @@ public class FoodOrderTest {
 			imp.createUser(customer, menu);
 		else
 			System.out.println("Invalied Input");
-		//imp.addMenu(menu);
 	}
-
 }

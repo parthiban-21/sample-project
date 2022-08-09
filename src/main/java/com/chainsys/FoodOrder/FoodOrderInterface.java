@@ -12,4 +12,6 @@ public interface FoodOrderInterface {
 	public void displayOrder(Customer customer, Menu menu) throws SQLException , ClassNotFoundException;
 	public void updateOrder(Customer customer, Menu menu) throws SQLException , ClassNotFoundException;
 	public void confirmOrder(Customer customer, Menu menu) throws SQLException , ClassNotFoundException;
+	public void updateMenu(Menu menu) throws SQLException , ClassNotFoundException;
+	public void deleteMenu(Menu menu) throws SQLException , ClassNotFoundException;
 }

@@ -105,13 +105,18 @@ public class FoodOrderImpl implements FoodOrderInterface{
 		//Get New Password from Customer
 		System.out.print("Enter the Password: ");
 		String password = ip.next();
-
-		if(checkLogin(mailID, password)) {
-			System.out.println("Successfully LoggedIN\n");
-			displayMenu(customer,menu);
+		if (mailID.equals("admin@gmail.com") && password.equals("admin")) {
+			System.out.println("Admin Login");
+			displayAdminControlls(customer, menu);
 		}
 		else {
-			System.out.println("No Account Found");
+			if(checkLogin(mailID, password)) {
+				System.out.println("Successfully LoggedIN\n");
+				displayMenu(customer,menu);
+			}
+			else {
+				System.out.println("No Account Found");
+			}
 		}
 	}
 
@@ -148,19 +153,16 @@ public class FoodOrderImpl implements FoodOrderInterface{
 		//Get Menu Name
 		System.out.print("Enter the Menu Name: ");
 		String name = ip.next();
-		//Need to Validate
 		menu.setMenuName(name);
 
 		//Get Menu Type
 		System.out.print("Enter the Menu Type: ");
 		String type = ip.next();
-		//Need to Validate
 		menu.setMenuType(type);
 
 		//Get Menu Price
 		System.out.print("Enter the Price: ");
 		int price = ip.nextInt();
-		//Need to Validate
 		menu.setMenuPrice(price);
 
 		PreparedStatement ps = null;
@@ -174,6 +176,62 @@ public class FoodOrderImpl implements FoodOrderInterface{
 			ps.setInt(3, menu.getMenuPrice());
 			ps.executeUpdate();
 			System.out.println("Menu Added Successfully");
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		finally {
+			ps.close();
+		}
+	}
+
+	//Update Menu 
+	public void updateMenu(Menu menu) throws SQLException , ClassNotFoundException {
+
+		//Get Menu ID
+		System.out.print("Enter the Menu-ID: ");
+		int menuID = ip.nextInt();
+		menuID = val.chechMenuID(menuID);
+
+		//Get Menu New Price
+		System.out.print("Enter the New Price: ");
+		int price = ip.nextInt();
+		menu.setMenuPrice(price);
+
+		PreparedStatement ps = null;
+		try {
+			Connection c = DbConnection.getConnection();
+			String query = "UPDATE menu SET price = ? WHERE menu_id = ?";
+			ps = c.prepareStatement(query);
+			ps.setInt(1, menu.getMenuPrice());
+			ps.setInt(2, menuID);
+			ps.executeUpdate();
+			System.out.println("Menu Updated Successfully");
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		finally {
+			ps.close();
+		}
+	}
+
+	//Delete Menu 
+	public void deleteMenu(Menu menu) throws SQLException , ClassNotFoundException {
+
+		//Get Menu ID
+		System.out.print("Enter the Menu-ID: ");
+		int menuID = ip.nextInt();
+		menuID = val.chechMenuID(menuID);
+
+		PreparedStatement ps = null;
+		try {
+			Connection c = DbConnection.getConnection();
+			String query = "DELETE FROM menu WHERE menu_id = ?";
+			ps = c.prepareStatement(query);
+			ps.setInt(1, menuID);
+			ps.executeUpdate();
+			System.out.println("Menu Deleted Successfully");
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -368,7 +426,7 @@ public class FoodOrderImpl implements FoodOrderInterface{
 	public void isConfirmed(Customer customer, Menu menu) throws ClassNotFoundException, SQLException {
 		int i=0;
 		while(i==0) {
-			System.out.print("Enter '1' to Confirm Order\n'2' to Update Order");
+			System.out.println("Enter '1' to Confirm Order\n'2' to Update Order");
 			int check = ip.nextInt();
 			if(check == 1) {
 				confirmOrder(customer, menu);
@@ -376,6 +434,31 @@ public class FoodOrderImpl implements FoodOrderInterface{
 			}
 			else if(check == 2) {
 				updateOrder(customer, menu);
+				++i;
+			}
+			else {
+				System.out.println("Wrong Input\n Try Again...\n");
+			}
+		}
+	}
+
+	public void displayAdminControlls(Customer customer, Menu menu) throws ClassNotFoundException, SQLException {
+		int i=0;
+		while(i==0) {
+			System.out.println("Enter '1' to Add Menu\n'2' to Update Menu\n'3' to Delete Menu");
+			int check = ip.nextInt();
+			if(check == 1) {
+				addMenu(menu);
+				++i;
+			}
+
+			else if(check == 2) {
+				updateMenu(menu);
+				++i;
+			}
+
+			else if(check == 3) {
+				deleteMenu(menu);
 				++i;
 			}
 			else {
